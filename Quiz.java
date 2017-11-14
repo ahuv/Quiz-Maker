@@ -1,5 +1,3 @@
- 
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,7 +9,9 @@ public class Quiz
 	protected ArrayList<String> questions;
 	protected ArrayList<ArrayList<String>> answerOptions;
 	protected ArrayList<Character> answers;
+	
 	final protected int NUM_OPTIONS = 4;
+	protected int numQuestions= 0;
 
 	private Scanner scan;
 
@@ -27,32 +27,32 @@ public class Quiz
 		readFile();
 	}
 
-	private void readFile() throws EmptyLineException
+	public void readFile() throws EmptyLineException
 	{
 		while (scan.hasNext())
 		{
 			addQuestion();
 			addAnswerOption();
 			addAnswer();
+			numQuestions++;
 		}
 	}
 
-	private void addQuestion() throws EmptyLineException
+	public void addQuestion() throws EmptyLineException
 	{
 		String line = scan.nextLine();
-
-		if (line.isEmpty())
+		
+		if (line.equals(""))
 		{
 			throw new EmptyLineException("Empty line.");
 		}
-
 		else
 		{
 			questions.add(line);
 		}
 	}
 
-	private void addAnswerOption() throws EmptyLineException
+	public void addAnswerOption() throws EmptyLineException
 	{
 
 		ArrayList<String> options = new ArrayList<>(NUM_OPTIONS);
@@ -60,6 +60,7 @@ public class Quiz
 		for (int i = 0; i < NUM_OPTIONS; i++)
 		{
 			String line = scan.nextLine();
+			
 			if (line.equals(""))
 			{
 				throw new EmptyLineException("Empty line.");
@@ -72,10 +73,15 @@ public class Quiz
 
 	}
 
-	private void addAnswer()
+	public void addAnswer() throws EmptyLineException
 	{
 
 		Character line = scan.nextLine().charAt(0);
+		
+		if (line.equals(""))
+		{
+			throw new EmptyLineException("Empty line.");
+		}
 
 		answers.add(line);
 
@@ -124,5 +130,6 @@ public class Quiz
 		}
 		return answers2;
 	}
+
 
 }
