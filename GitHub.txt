@@ -1,0 +1,18 @@
+How do you create a local repo?
+A. git status
+B. git add
+C. git init
+D. git add origin
+C
+How do you upload changes to a remote repo?
+A. git add
+B. git push
+C. git commit
+D. git checkout
+B
+What does "git add" do?
+A. sends changes to remote repo
+B. creates a new commit
+C. adds files to the local repo
+D. stages files for a commit
+D

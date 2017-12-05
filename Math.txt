@@ -1,0 +1,42 @@
+What is 5 * 27?
+A. 130
+B
+C. 142
+D. 135
+D
+What is 1/0 ?
+A. 0
+B. 1
+C. undefined
+D. infinity
+C
+What is 0/1 ?
+A. 1
+B. 0
+C. infinity
+D. undefined
+B
+What is 5! ?
+A. Five
+B. High Five!
+C. factorial five
+D. five factorials
+C
+If a triangle has one angle of 50 degrees, the sum of the other angles must be:
+A. 310 degrees
+B. 40 degrees
+C. 130 degrees
+D. impossible to know
+C
+What is the opposite of infinity?
+A. 0
+B. infinitely small
+C. infinitesimal
+D. all of the above
+D
+What is a perfect square?
+A. Matzah
+B. An integer that is the square of an integer
+C. A box shape with all sides of equal length
+D. Any number times itself
+B
