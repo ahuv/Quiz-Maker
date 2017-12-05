@@ -1,7 +1,1 @@
-/EmptyLineException.class
-/FileNotFoundException.class
-/InputMismatchException.class
-/Quiz.class
-/TestClass.class
-/QuizMarker.class
-/Quiz_TESTS.class
+bin/

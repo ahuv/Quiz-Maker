@@ -1,3 +1,5 @@
+package Quiz;
+
 import static org.junit.Assert.*;
 import java.io.FileReader;
 import java.io.IOException;

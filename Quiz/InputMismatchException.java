@@ -1,3 +1,4 @@
+package Quiz;
 
 public class InputMismatchException extends Exception
 {
