@@ -1,6 +1,0 @@
-Test?
-A. yes
-B. no
-C. maybe
-D. sometimes
-c
