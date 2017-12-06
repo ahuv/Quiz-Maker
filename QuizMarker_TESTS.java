@@ -1,3 +1,4 @@
+package Quiz;
 
 
 import static org.junit.Assert.*;

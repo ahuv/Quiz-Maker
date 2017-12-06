@@ -1,3 +1,4 @@
+package Quiz;
 
 
 import java.io.FileNotFoundException;
@@ -9,6 +10,7 @@ public class Marks
 {
 	private ArrayList<String> names;
 	private ArrayList<Integer> grades;
+	private ArrayList<String> quizzes;
 	Scanner scan;
 	
 	//instantiates the names and grades ArrayLists and calls readFile()
@@ -16,7 +18,8 @@ public class Marks
 	{
 		names = new ArrayList<String>();
 		grades = new ArrayList<Integer>();
-
+		quizzes = new ArrayList<String>();
+		
 		readFile();
 	}
 	
@@ -30,6 +33,7 @@ public class Marks
 		{
 			names.add(scan.next());
 			grades.add(scan.nextInt());
+			quizzes.add(scan.next());
 		}
 		
 	}
@@ -50,6 +54,14 @@ public class Marks
 		return grades;
 	}
 
+
+	/**
+	 * @return the quizzes
+	 */
+	public ArrayList<String> getQuizzes()
+	{
+		return quizzes;
+	}
 	
 	
 }

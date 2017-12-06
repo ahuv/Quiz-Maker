@@ -1,5 +1,7 @@
+package Quiz;
 
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -33,6 +35,21 @@ public class QuizList {
 	public ArrayList<String> getList()
 	{
 		return list;
+	}
+	
+	public void deleteQuiz(String FileName) throws IncorrectQuizNameException
+	{
+		for (String s : list)
+		{
+			if (s.equalsIgnoreCase(FileName))
+			{
+				File file = new File(FileName);
+				file.delete();
+				return;
+			}
+		}
+		
+		throw new IncorrectQuizNameException();
 	}
 	
 }

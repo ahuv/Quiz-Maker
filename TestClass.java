@@ -1,3 +1,4 @@
+package Quiz;
 
 
 import java.io.*;
@@ -58,9 +59,9 @@ public class TestClass
 			displayResults(marker);
 			
 			// writes scores to file
-			saveScores(marker, name);
+			saveScores(marker, name, quizChoice);
 			
-			System.out.println("\nWould you like to take another quiz?");
+			System.out.println("\nWould you like to take another quiz? y/n");
 			another = sc.nextLine();
 			}while(another.equalsIgnoreCase("y"));
 			if(!(another.equalsIgnoreCase("y")))
@@ -118,8 +119,12 @@ public class TestClass
 				Marks marks = new Marks();
 				for (int i =0; i < marks.getGrades().size(); i++)
 				{
-					System.out.println(marks.getNames().get(i)+ ": " + marks.getGrades().get(i));
+					System.out.println(marks.getNames().get(i)+ ": " + marks.getQuizzes() .get(i) +" " + marks.getGrades().get(i));
 				}
+				break;
+			case 4: //deletes quiz
+				deleteQuiz();
+				
 				break;
 			case 0: //exit application
 				System.out.println("Ending application...");
@@ -139,6 +144,25 @@ public class TestClass
 	}
 	
 	
+	private static void deleteQuiz()
+	{
+		Scanner scan = new Scanner(System.in);
+		
+		QuizList quizzes;
+		try
+		{
+			quizzes = new QuizList();
+			System.out.println("Enter quiz file name: ");
+			quizzes.deleteQuiz(scan.nextLine());
+		}
+		catch (java.io.FileNotFoundException | IncorrectQuizNameException e)
+		{
+			System.out.println(e);
+		}
+		
+	}
+
+
 	/**
 	 * Initialization of the quiz program.
 	 * Asks the user to choose his user status (teacher or student).
@@ -200,7 +224,7 @@ public class TestClass
 		Scanner sc = new Scanner(System.in);
 		for(int i = 0; i < myQuiz.getNumQs(); i++)
 		{
-			sc.nextLine();
+			
 			try{
 				System.out.println("Enter question " + (i+1) + ": ");
 				String question = sc.nextLine();
@@ -248,7 +272,7 @@ public class TestClass
 					break;
 				}
 			};
-			
+			sc.nextLine();
 		}
 		System.out.println("\nYou have just created the following quiz: \n");
 		myQuiz.viewQuiz();
@@ -340,16 +364,6 @@ public class TestClass
 		return list;
 	}
 	
-
-	/*private static void checkIdentification(Users users, Scanner sc)
-			throws IncorrectPasswordException, IncorrectUsernameException
-	{
-		System.out.println("Please enter your username:");
-		String name = sc.nextLine();
-		System.out.println("Please enter your password:");
-		String password = sc.nextLine();
-		users.checkStudentPassword(name, password);
-	}*/
 
 	/**
 	 * The takeQuiz method presents a quiz to the student to take.
@@ -447,11 +461,12 @@ public class TestClass
 	 * @param studentName The name of the student
 	 * @throws IOException
 	 */
-	private static void saveScores(QuizMarker marker, String studentName) throws IOException
+	private static void saveScores(QuizMarker marker, String studentName, String quizName) throws IOException
 	{
 		PrintWriter printWriter = new PrintWriter(new FileWriter("Marks.txt",true));
 		printWriter.append(studentName);
-		printWriter.append("\n" + marker.getScore() + "\n");
+		printWriter.append("\n" + marker.getScore());
+		printWriter.append("\n" + quizName  + "\n");
 		printWriter.close();
 	}
 

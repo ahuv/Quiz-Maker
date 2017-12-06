@@ -1,3 +1,4 @@
+package Quiz;
 
 
 public class EmptyLineException extends Exception {
