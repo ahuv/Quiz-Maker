@@ -1,5 +1,3 @@
-package Quiz;
-
 
 public class DuplicateQuizNameException extends Exception {
 	

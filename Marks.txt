@@ -10,3 +10,6 @@ OurClass.txt
 student1
 75
 OurClass.txt
+student1
+100
+Calendar.txt

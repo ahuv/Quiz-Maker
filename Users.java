@@ -1,4 +1,3 @@
-package Quiz;
 
 
 import java.util.ArrayList;
@@ -33,6 +32,7 @@ public class Users
 			students.add(student);
 		}
 	}
+	
 	
 	private void readTeacherFile() throws FileNotFoundException
 	{
@@ -79,6 +79,24 @@ public class Users
 		}
 		
 		throw new IncorrectUsernameException("Incorrect Username.");
+	}
+	
+	//return an ArrayList of student names contained in the file
+	public ArrayList<String> getStudents() throws FileNotFoundException
+	{
+		ArrayList<String> studentUsers = new ArrayList<String>();
+		ArrayList<String> pswd = new ArrayList<String>();
+		
+		FileReader studentFile = new FileReader("StudentUserNames.txt");
+		studentScan = new Scanner(studentFile);
+		
+		while(studentScan.hasNext())
+		{
+			studentUsers.add(studentScan.next());
+			pswd.add(studentScan.next());
+		}
+		
+		return studentUsers;
 	}
 
 	

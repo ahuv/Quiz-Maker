@@ -1,4 +1,3 @@
-package Quiz;
 
 
 import java.util.ArrayList;

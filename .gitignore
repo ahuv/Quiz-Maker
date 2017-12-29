@@ -16,3 +16,4 @@ bin/
 /Quiz_TESTS.class
 /TestClass.class
 /Users.class
+/IncorrectQuizNameException.class

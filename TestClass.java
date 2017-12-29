@@ -1,4 +1,3 @@
-package Quiz;
 
 
 import java.io.*;
@@ -58,7 +57,7 @@ public class TestClass
 			QuizMarker marker = new QuizMarker(quiz.getAnswers(), studentAnswers);
 			displayResults(marker);
 			
-			// writes scores to file
+			// write scores to file
 			saveScores(marker, name, quizChoice);
 			
 			System.out.println("\nWould you like to take another quiz? y/n");
@@ -112,19 +111,15 @@ public class TestClass
 					System.out.println("A quiz with that name already exists.");
 				}
 				break;
-			case 2: //displays available quizzes
+			case 2: //display available quizzes
 				showQuizzes();
 				break;
-			case 3:	//displays student results
-				Marks marks = new Marks();
-				for (int i =0; i < marks.getGrades().size(); i++)
-				{
-					System.out.println(marks.getNames().get(i)+ ": " + marks.getQuizzes() .get(i) +" " + marks.getGrades().get(i));
-				}
+			case 3:	//display student results
+				getMarks();
+				
 				break;
 			case 4: //deletes quiz
 				deleteQuiz();
-				
 				break;
 			case 0: //exit application
 				System.out.println("Ending application...");
@@ -143,24 +138,6 @@ public class TestClass
 		
 	}
 	
-	
-	private static void deleteQuiz()
-	{
-		Scanner scan = new Scanner(System.in);
-		
-		QuizList quizzes;
-		try
-		{
-			quizzes = new QuizList();
-			System.out.println("Enter quiz file name: ");
-			quizzes.deleteQuiz(scan.nextLine());
-		}
-		catch (java.io.FileNotFoundException | IncorrectQuizNameException e)
-		{
-			System.out.println(e);
-		}
-		
-	}
 
 
 	/**
@@ -207,6 +184,7 @@ public class TestClass
 		System.out.println("1. Create new quiz");
 		System.out.println("2. View quizzes in test bank");
 		System.out.println("3. View student results");
+		System.out.println("4. Delete quiz");
 		System.out.println("0. Exit application");
 		
 		choice = sc.nextInt();
@@ -250,7 +228,22 @@ public class TestClass
 				{
 					throw new EmptyLineException("");
 				}
-				options.add(option);
+				switch(n)
+				{
+				case 0:
+					options.add("A. " + option);
+					break;
+				case 1:
+					options.add("B. " + option);
+					break;
+				case 2:
+					options.add("C. " + option);
+					break;
+				case 3: 
+					options.add("D. " + option);
+					break;
+				}
+				
 			}
 			myQuiz.addOptions(options);
 			}
@@ -280,14 +273,13 @@ public class TestClass
 	}
 	
 	/**
-	 * The quizDirections method diplays a set of instructions for the teacher creating a new quiz.
+	 * The quizDirections method displays a set of instructions for the teacher creating a new quiz.
 	 */
 	private static void quizDirections()
 	{
 		System.out.println("QUIZ DIRECTIONS:");
 		System.out.println("You may specify the amount of questions on the quiz.");
 		System.out.println("Each question must have four possible answers.");
-		System.out.println("Please precede an option by a character (Option 1 is A, 2 is B, 3 is C, 4 is D).");
 		System.out.println("Do not leave any options blank.");
 		System.out.println("An answer is a single character that matches the correct answer option: a, b, c, or d.");
 		System.out.println("A correct answer may only be ONE character long "
@@ -325,7 +317,7 @@ public class TestClass
 		String quiz = "";
 		boolean chosen = false;
 		
-		System.out.println("Please select a quiz to take: ");
+		System.out.println("Please select a quiz: ");
 		
 		ArrayList<String> list = showQuizzes();
 		
@@ -362,6 +354,27 @@ public class TestClass
 			System.out.println((i+1) + ". " + list.get(i));
 		}
 		return list;
+	}
+	
+	/**
+	 * The deleteQuiz method allows a teacher to delete a quiz from the list of available quizzes.
+	 */
+	private static void deleteQuiz()
+	{
+		Scanner scan = new Scanner(System.in);
+		
+		QuizList quizzes;
+		try
+		{
+			quizzes = new QuizList();
+			System.out.println("Enter quiz file name: ");
+			quizzes.deleteQuiz(scan.nextLine());
+		}
+		catch (java.io.FileNotFoundException | IncorrectQuizNameException e)
+		{
+			System.out.println(e);
+		}
+		
 	}
 	
 
@@ -470,4 +483,114 @@ public class TestClass
 		printWriter.close();
 	}
 
+	private static void getMarks() throws java.io.FileNotFoundException
+	{
+		Scanner sc = new Scanner(System.in);
+		
+		Marks marks = new Marks();
+		
+		System.out.println("How would you like to view quiz results?");
+		
+		System.out.println("1. By student");
+		System.out.println("2. By quiz");
+		System.out.println("3. Show all grades");
+		
+		int choice = sc.nextInt();
+		switch(choice)
+		{
+		case 1: //show grades by student
+			Users studentUsers = new Users();
+			ArrayList<String> students = new ArrayList<String>();
+			students = studentUsers.getStudents();
+			for(int i = 0; i < students.size(); i++)
+			{
+				System.out.println((i+1) + ". " + students.get(i));
+			}
+			
+			System.out.println("Enter the number corresponding to the student you would like to view: ");
+			
+			int stu = sc.nextInt();
+			String stud = students.get(stu - 1);
+			if(marks.getNames().contains(stud))
+			{
+				ArrayList<Integer> grades = new ArrayList<Integer>();
+				for(int i = 0; i < marks.getNames().size(); i++)
+				{
+					if(marks.getNames().get(i).equals(stud))
+					{
+						grades.add(marks.getGrades().get(i));
+					}
+				}
+				System.out.println(grades);
+				
+				//calculate student average
+				double points = 0;
+				
+				for(Integer g : grades)
+				{
+					points += g;
+				}
+				double average = points / grades.size();
+				System.out.println("Average: " + average);
+			}
+			else
+			{
+				System.out.println("There are currently no grades for the selected student.");
+			}
+			break;
+			
+		case 2: //show grades by quiz
+			ArrayList<String> quizzes = showQuizzes();
+			System.out.println("Enter the number corresponding to the quiz you would like to view: ");
+			int quiz = sc.nextInt();
+			String qz = quizzes.get(quiz - 1);
+			
+			if(marks.getQuizzes().contains(qz))
+			{
+				ArrayList<Integer> grades = new ArrayList<Integer>();
+				for(int i = 0; i < marks.getQuizzes().size(); i++)
+				{
+					if(marks.getQuizzes().get(i).equals(qz))
+					{
+						grades.add(marks.getGrades().get(i));
+					}
+				}
+				System.out.println(grades);
+				
+				//calculate student average
+				double points = 0;
+				
+				for(Integer g : grades)
+				{
+					points += g;
+				}
+				double average = points / grades.size();
+				System.out.println("Average: " + average);
+			}
+			else
+			{
+				System.out.println("There are currently no grades for the selected quiz.");
+			}
+			break;
+		case 3: //show all grades
+			for (int i =0; i < marks.getGrades().size(); i++)
+			{
+				System.out.println(marks.getNames().get(i)+ ": " + marks.getQuizzes() .get(i) +" " + marks.getGrades().get(i));
+			}
+			break;
+		default:
+			System.out.println("Incorrect Entry");
+			break;
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	}
 }
