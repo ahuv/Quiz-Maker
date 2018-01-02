@@ -17,3 +17,4 @@ bin/
 /TestClass.class
 /Users.class
 /IncorrectQuizNameException.class
+/DuplicateUserNameException.class

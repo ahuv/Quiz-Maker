@@ -2,6 +2,6 @@ OurClass.txt
 Quiz1.txt
 Quiz2.txt
 School2.txt
-SingleQuestion.txt
 Math.txt
 Calendar.txt
+Spelling.txt

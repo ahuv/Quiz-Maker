@@ -2,6 +2,7 @@
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import javax.swing.JLabel;
@@ -12,13 +13,20 @@ import javax.swing.JRadioButton;
 public class TestClass
 {
 	public static void main(String[] args)
-			throws FileNotFoundException, IOException, InputMismatchException, EmptyLineException
 	{
 		Scanner sc = new Scanner(System.in);
-		Users users = new Users();
+		Users users = null;
+		try{
+			users = new Users();
+		}
+		catch(FileNotFoundException | java.io.FileNotFoundException ex){
+			System.out.println("File not found.");
+		}
 		boolean found = true;
 		String name = "";
+		String password = "";
 		
+	
 		int choice = initialize();
 		switch (choice)
 		{
@@ -30,13 +38,11 @@ public class TestClass
 				{
 					found = true;
 					name = JOptionPane.showInputDialog("Please enter your username: ");
-					String password = JOptionPane.showInputDialog("Please enter your password: ");
+					password = JOptionPane.showInputDialog("Please enter your password: ");
 					users.checkStudentPassword(name, password);
 					// checkIdentification(users,sc,name);
-
 				}
-				catch (IncorrectPasswordException | IncorrectUsernameException e)
-				{
+				catch (IncorrectPasswordException | IncorrectUsernameException e){
 					System.out.println(e);
 					found = false;
 				}
@@ -45,25 +51,37 @@ public class TestClass
 			System.out.println("Hello " + name);
 			
 			String another;
+			String quizChoice = "";
+			Quiz quiz = null;
 			do
 			{
-			String quizChoice = chooseQuiz();
-			Quiz quiz = new Quiz(quizChoice);
+				try {
+					quizChoice = chooseQuiz();
+					quiz = new Quiz(quizChoice);
+				} 
+				catch (FileNotFoundException | IOException | EmptyLineException e) {
+					e.printStackTrace();
+				}
 			
-			// take quiz
-			ArrayList<Character> studentAnswers = takeQuiz(quiz, sc);
+				// take quiz
+				ArrayList<Character> studentAnswers = takeQuiz(quiz, sc);
 			
-			// display results
-			QuizMarker marker = new QuizMarker(quiz.getAnswers(), studentAnswers);
-			displayResults(marker);
+				// display results
+				QuizMarker marker = new QuizMarker(quiz.getAnswers(), studentAnswers);
+				displayResults(marker);
 			
-			// write scores to file
-			saveScores(marker, name, quizChoice);
-			
-			System.out.println("\nWould you like to take another quiz? y/n");
-			another = sc.nextLine();
-			}while(another.equalsIgnoreCase("y"));
-			if(!(another.equalsIgnoreCase("y")))
+				// write scores to file
+				
+				saveScores(marker, name, quizChoice);
+				
+				do 
+				{
+					System.out.println("\nWould you like to take another quiz? y/n");
+					another = sc.nextLine();
+				}while(!(another.equalsIgnoreCase("y") || another.equalsIgnoreCase("n")));
+			}while (another.equalsIgnoreCase("y"));
+
+			if (!(another.equalsIgnoreCase("y")))
 			{
 				System.out.println("Ending application...");
 				System.out.println("Quiz bank closed.");
@@ -78,7 +96,7 @@ public class TestClass
 				{
 					found = true;
 					name = JOptionPane.showInputDialog("Please enter your username: ");
-					String password = JOptionPane.showInputDialog("Please enter your password: ");
+					password = JOptionPane.showInputDialog("Please enter your password: ");
 					users.checkTeacherPassword(name, password);
 					// checkIdentification(users,sc,name);
 				}
@@ -89,48 +107,14 @@ public class TestClass
 				}
 			}while (found == false);
 			
-			while(true){
-			int choiceT = teacherMenu();
-			switch (choiceT)
-			{
-			case 1:	//create new quiz
-				quizDirections();
-				System.out.println("\nEnter name of quiz: ");
-				String quizName = sc.nextLine();
-				//sc.nextLine();
-				System.out.println("Enter number of questions: ");
-				int numQs = sc.nextInt();
-					//System.out.println("Enter number of answer options per question: ");
-					//int numAs = sc.nextInt();
-				try
-				{
-				NewQuiz myQuiz = new NewQuiz(quizName, numQs, 4);
-				createQuiz(myQuiz);
-				}
-				catch(DuplicateQuizNameException e){
-					System.out.println("A quiz with that name already exists.");
-				}
-				break;
-			case 2: //display available quizzes
-				showQuizzes();
-				break;
-			case 3:	//display student results
-				getMarks();
+			int choiceT;
+			do{
+				choiceT = teacherMenu();
+				teacherAction(choiceT);
 				
-				break;
-			case 4: //deletes quiz
-				deleteQuiz();
-				break;
-			case 0: //exit application
-				System.out.println("Ending application...");
-				System.out.println("Quiz bank closed.");
-				System.exit(0);
-				break;
-			default:
-				System.out.println("Incorrect Entry");
-				break;
-			}
-			}
+			}while(choiceT != 0);
+			
+			break;
 		default:
 			System.out.println("Incorrect Entry");
 			break;
@@ -138,7 +122,6 @@ public class TestClass
 		
 	}
 	
-
 
 	/**
 	 * Initialization of the quiz program.
@@ -159,7 +142,30 @@ public class TestClass
 		JOptionPane.showMessageDialog(null, panel);
 		
 		int choice = 0;
-		if(student.isSelected())
+		
+		//as long as both options are selected, 
+		//prompt user to choose only one option
+		if(student.isSelected() && teacher.isSelected())
+		{
+			do
+			{
+			JOptionPane.showMessageDialog(null, "Cannot select two options at once!");
+			JOptionPane.showMessageDialog(null, panel);
+			
+			if(student.isSelected())
+			{
+				choice = 1;
+				break;
+			}
+			else if(teacher.isSelected())
+			{
+				choice = 2;
+				break;
+			}
+			
+			}while(student.isSelected() && teacher.isSelected());
+		}
+		else if(student.isSelected())
 		{
 			choice = 1;
 		}
@@ -178,38 +184,160 @@ public class TestClass
 	private static int teacherMenu()
 	{
 		Scanner sc = new Scanner(System.in);
-		int choice;
+		int choice = -1;
 		
+		do
+		{
 		System.out.println("\nChoose an option from the following: \n");
 		System.out.println("1. Create new quiz");
 		System.out.println("2. View quizzes in test bank");
 		System.out.println("3. View student results");
 		System.out.println("4. Delete quiz");
+		System.out.println("5. Add new student");
 		System.out.println("0. Exit application");
 		
-		choice = sc.nextInt();
-		return choice;
+		try{
+			choice = sc.nextInt();
+		}
+		catch(InputMismatchException e){
+			System.out.println("Invalid entry. Please enter a number from 0-4: ");
+			sc.next();
+		}
+	}while(choice < 0);
+	
+	return choice;
 	}
 	
 	/**
-	 * Guides a teacher in the creation of a new Quiz object.
-	 * The quiz is added to a list of quizzes available to students.
-	 * @param myQuiz A NewQuiz object
-	 * @throws IOException
+	 * The teacherAction method reads in the teacher's choice
+	 * as an int and chooses an action depending on the choice.
 	 */
-	private static void createQuiz(NewQuiz myQuiz) throws IOException
+	private static void teacherAction(int choice) 
 	{
 		Scanner sc = new Scanner(System.in);
+		boolean check = true;
+		
+		switch (choice)
+		{
+		case 1:	//create new quiz
+			quizDirections();
+			
+			String quizName = "";
+			String questions = "";
+			int numQs = 0;
+			
+			do{
+			System.out.println("\nEnter name of quiz: ");
+			quizName = sc.nextLine();
+			check = checkResponse(quizName);
+			}while(check == false);
+			
+			System.out.println("Enter number of questions: ");
+			numQs = sc.nextInt();
+			
+			/*catch(InputMismatchException | NumberFormatException | StringIndexOutOfBoundsException e){
+				do{
+					System.out.println("Expecting integer.");
+					
+					do{
+					System.out.println("Enter number of questions: ");
+					questions = sc.nextLine();
+					check = checkResponse(questions);
+					if(check == true){break;}
+					}while(check == false);
+					
+				}while(!Character.isDigit(questions.charAt(0)));
+				numQs = Integer.parseInt(questions);
+			}*/
+			
+			try
+			{
+				NewQuiz myQuiz = new NewQuiz(quizName, numQs, 4);
+				createQuiz(myQuiz);
+			}
+			catch(DuplicateQuizNameException e){
+				System.out.println("A quiz with that name already exists.");
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			break;
+		case 2: //display available quizzes
+			showQuizzes();
+			break;
+		case 3:	//display student results
+			getMarks();
+			break;
+		case 4: //deletes quiz
+			deleteQuiz();
+			break;
+		case 5:  //add new student
+			addStudent();
+			break;
+		case 0: //exit application
+			System.out.println("Ending application...");
+			System.out.println("Quiz bank closed.");
+			System.exit(0);
+			break;
+		default:
+			System.out.println("Incorrect Entry");
+			break;
+		}
+	}
+	
+	/**
+	 * The addStudent method allows a teacher to add
+	 * a new student user to the application.
+	 */
+	private static void addStudent()
+	{
+		Scanner scan = new Scanner(System.in);
+		
+		System.out.println("Enter student username: ");
+		String username = scan.nextLine();
+		System.out.println("Enter password: ");
+		String password = scan.nextLine();
+		
+		try
+		{
+			Users users = new Users();
+			users.addStudent(username, password);
+		}
+		catch (IOException  | FileNotFoundException e)
+		{
+			System.out.println(e);
+		}
+		catch (DuplicateUserNameException e)
+		{
+			System.out.println("Username already in the system. Please try again.");
+			addStudent();
+		}
+	}
+	
+	/**
+	 * The createQuiz method guides a teacher in the creation of a new Quiz object.
+	 * The quiz is added to a list of quizzes available to students.
+	 * @param myQuiz A NewQuiz object
+	 */
+	private static void createQuiz(NewQuiz myQuiz) 
+	{
+		boolean check = true;
+		String question;
+		String option;
+		
+		Scanner sc = new Scanner(System.in);
+		
 		for(int i = 0; i < myQuiz.getNumQs(); i++)
 		{
 			
 			try{
+				do{
 				System.out.println("Enter question " + (i+1) + ": ");
-				String question = sc.nextLine();
-				if(question.equals(""))
-				{
-					throw new EmptyLineException("");
-				}
+				question = sc.nextLine();
+				check = checkResponse(question);
+				}while(check == false);
+				
 				myQuiz.addQuestion(question);
 				
 			}
@@ -222,12 +350,16 @@ public class TestClass
 			ArrayList<String> options = new ArrayList<String>(numOptions);
 			for(int n = 0; n < numOptions; n++)
 			{
+				do{
 				System.out.println("Enter option " + (n+1) + ": ");
-				String option = sc.nextLine();
-				if(option.equals(""))
-				{
-					throw new EmptyLineException("");
-				}
+				option = sc.nextLine();
+				check = checkResponse(option);
+				}while(check == false);
+				
+				//if(option.equals(""))
+				//{
+					//throw new EmptyLineException("");
+				//}
 				switch(n)
 				{
 				case 0:
@@ -252,24 +384,33 @@ public class TestClass
 			}
 			
 			char answer;
-			boolean valid = false;;
+			boolean valid = false;
 			
-			while(valid==false)
+			System.out.println("Enter the character of the correct answer: ");
+			
+			do
 			{
-				System.out.println("Enter the character of the correct answer: ");
+				
 				answer = sc.next().charAt(0);
-				valid = validAnswer(answer);
+				valid = validateAnswer(answer);
 				if(valid==true)
 				{
 					myQuiz.addAnswer(answer);
 					break;
 				}
-			};
+			}while(valid==false);
 			sc.nextLine();
 		}
+		
 		System.out.println("\nYou have just created the following quiz: \n");
 		myQuiz.viewQuiz();
-		myQuiz.makeNewQuiz();
+		
+		try {
+			myQuiz.makeNewQuiz();
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -286,33 +427,38 @@ public class TestClass
 				+ "(do not make both A and B correct; rather make anther options be \"Both A and B\"");
 	}
 	
-	public static boolean validAnswer(char answer)
+	
+	public static boolean checkResponse(String answer)
 	{
 		Scanner sc = new Scanner(System.in);
+		
 		boolean valid = true;
 		
-		while (answer != 'a' && answer != 'b' && answer != 'c' && answer != 'd' 
-				&& answer != 'A' && answer != 'B' && answer != 'C' && answer != 'D')
+		while (answer.isEmpty())
 		{
 			valid = false;
-			System.out.print("That is not a valid answer.");
-			System.out.println(" Please re-enter your answer: ");
-			String input = sc.nextLine();
-			answer = input.charAt(0);
+			System.out.println("Please re-enter your response: ");
+			answer = sc.nextLine();
+			if(!answer.isEmpty())
+			{
+				valid = true;
+				break;
+			}
 		}
 		
 		return valid;
 	}
 	
+	
 	/**
 	 * The chooseQuiz method presents a list of available quizzes that a student may choose
 	 * and asks the student to choose a quiz from the list.
 	 * @return String quiz The name of the quiz that the student has chosen to take.
-	 * @throws java.io.FileNotFoundException
 	 */
-	private static String chooseQuiz() throws java.io.FileNotFoundException
+	private static String chooseQuiz()
 	{
 		Scanner sc = new Scanner(System.in);
+		
 		int choice = 0;
 		String quiz = "";
 		boolean chosen = false;
@@ -341,18 +487,28 @@ public class TestClass
 	/**
 	 * The showQuizzes method displays a list of quizzes currently available for students to take.
 	 * @return list An arraylist of quiz names
-	 * @throws java.io.FileNotFoundException
 	 */
-	private static ArrayList<String> showQuizzes() throws java.io.FileNotFoundException
+	private static ArrayList<String> showQuizzes()
 	{
 		System.out.println("The following quizzes are available: ");
-		QuizList quizzes = new QuizList();
+		
+		QuizList quizzes = null;
+		
+		try {
+			quizzes = new QuizList();
+		} 
+		catch (java.io.FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
 		ArrayList<String> list = new ArrayList<String>();
 		list = quizzes.getList();
+		
 		for(int i = 0; i < list.size(); i++)
 		{
 			System.out.println((i+1) + ". " + list.get(i));
 		}
+		
 		return list;
 	}
 	
@@ -364,16 +520,33 @@ public class TestClass
 		Scanner scan = new Scanner(System.in);
 		
 		QuizList quizzes;
+		
 		try
 		{
 			quizzes = new QuizList();
-			System.out.println("Enter quiz file name: ");
-			quizzes.deleteQuiz(scan.nextLine());
+			String quiz = chooseQuiz();
+			
+			System.out.println("Are you sure you want to delete this quiz? (Y/N)");
+			String response = scan.nextLine();
+			
+			if(response.equalsIgnoreCase("Y"))
+			{
+				if(quizzes.deleteQuiz(quiz))
+				{
+					System.out.println("Quiz deleted.");
+				}
+			}
+			else
+			{
+				System.out.println("Delete aborted.");
+			}
+			
 		}
-		catch (java.io.FileNotFoundException | IncorrectQuizNameException e)
+		catch (IOException | IncorrectQuizNameException e)
 		{
 			System.out.println(e);
 		}
+		
 		
 	}
 	
@@ -422,7 +595,6 @@ public class TestClass
 	 */
 	private static Character enterAnswer(Scanner sc)
 	{
-		
 		String input = sc.nextLine();
 		char answer = input.charAt(0);
 		validateAnswer(answer);
@@ -435,22 +607,23 @@ public class TestClass
 	 * Called from the enterAnswer() method.
 	 * @param answer The student's answer to validate
 	 */
-	private static void validateAnswer(char answer)
+	private static boolean validateAnswer(char answer)
 	{
 		Scanner sc = new Scanner(System.in);
-		char val1 = 'a';
-		char val2 = 'b';
-		char val3 = 'c';
-		char val4 = 'd';
-
-		while (answer != val1 && answer != val2 && answer != val3 && answer != val4 
+		
+		boolean valid = true;
+		
+		while (answer != 'a' && answer != 'b' && answer != 'c' && answer != 'd' 
 				&& answer != 'A' && answer != 'B' && answer != 'C' && answer != 'D')
 		{
+			valid = false;
 			System.out.print("That is not a valid answer.");
 			System.out.println(" Please re-enter your answer: ");
 			String input = sc.nextLine();
 			answer = input.charAt(0);
 		}
+		
+		return valid;
 
 	}
 
@@ -472,22 +645,41 @@ public class TestClass
 	 * The saveScores method writes the student name and score to a file of student grades.
 	 * @param marker A QuizMarker object
 	 * @param studentName The name of the student
-	 * @throws IOException
 	 */
-	private static void saveScores(QuizMarker marker, String studentName, String quizName) throws IOException
+	private static void saveScores(QuizMarker marker, String studentName, String quizName) 
 	{
-		PrintWriter printWriter = new PrintWriter(new FileWriter("Marks.txt",true));
+		PrintWriter printWriter = null;
+		
+		try {
+			printWriter = new PrintWriter(new FileWriter("Marks.txt",true));
+		} 
+		catch (IOException e){
+			e.printStackTrace();
+		}
+		
 		printWriter.append(studentName);
 		printWriter.append("\n" + marker.getScore());
 		printWriter.append("\n" + quizName  + "\n");
 		printWriter.close();
 	}
 
-	private static void getMarks() throws java.io.FileNotFoundException
+	/**
+	 * The getMarks method returns a list of grades for a teacher to view.
+	 * Grades can be viewed as a comprehensive list, or can be sorted by 
+	 * student or by quiz.
+	 */
+	private static void getMarks() 
 	{
 		Scanner sc = new Scanner(System.in);
 		
-		Marks marks = new Marks();
+		Marks marks = null;
+		
+		try {
+			marks = new Marks();
+		} 
+		catch (java.io.FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
 		
 		System.out.println("How would you like to view quiz results?");
 		
@@ -496,12 +688,21 @@ public class TestClass
 		System.out.println("3. Show all grades");
 		
 		int choice = sc.nextInt();
+		
 		switch(choice)
 		{
 		case 1: //show grades by student
-			Users studentUsers = new Users();
 			ArrayList<String> students = new ArrayList<String>();
+			
+			try{
+			Users studentUsers = new Users();
 			students = studentUsers.getStudents();
+			}
+			catch(FileNotFoundException | java.io.FileNotFoundException e)
+			{
+				System.out.println("File not found.");
+			}
+			
 			for(int i = 0; i < students.size(); i++)
 			{
 				System.out.println((i+1) + ". " + students.get(i));
@@ -521,6 +722,7 @@ public class TestClass
 						grades.add(marks.getGrades().get(i));
 					}
 				}
+				
 				System.out.println(grades);
 				
 				//calculate student average
@@ -541,6 +743,7 @@ public class TestClass
 			
 		case 2: //show grades by quiz
 			ArrayList<String> quizzes = showQuizzes();
+			
 			System.out.println("Enter the number corresponding to the quiz you would like to view: ");
 			int quiz = sc.nextInt();
 			String qz = quizzes.get(quiz - 1);
@@ -555,6 +758,7 @@ public class TestClass
 						grades.add(marks.getGrades().get(i));
 					}
 				}
+				
 				System.out.println(grades);
 				
 				//calculate student average
@@ -575,22 +779,14 @@ public class TestClass
 		case 3: //show all grades
 			for (int i =0; i < marks.getGrades().size(); i++)
 			{
-				System.out.println(marks.getNames().get(i)+ ": " + marks.getQuizzes() .get(i) +" " + marks.getGrades().get(i));
+				System.out.println(marks.getNames().get(i)+ ": " 
+						+ marks.getQuizzes() .get(i) +" " + marks.getGrades().get(i));
 			}
 			break;
 		default:
 			System.out.println("Incorrect Entry");
 			break;
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+	
 	}
 }

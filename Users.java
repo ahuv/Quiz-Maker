@@ -1,9 +1,11 @@
 
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.io.*;
-import java.io.FileNotFoundException;
 
 public class Users
 {
@@ -12,7 +14,7 @@ public class Users
 	Scanner studentScan;
 	Scanner teacherScan;
 	
-	public Users() throws FileNotFoundException
+	public Users() throws FileNotFoundException, java.io.FileNotFoundException
 	{
 		students = new ArrayList<Person>();
 		teachers = new ArrayList<Person>();
@@ -21,7 +23,7 @@ public class Users
 		readTeacherFile();
 	}
 	
-	private void readStudentFile() throws FileNotFoundException
+	private void readStudentFile() throws FileNotFoundException, java.io.FileNotFoundException
 	{
 		FileReader studentFile = new FileReader("StudentUserNames.txt");
 		studentScan = new Scanner(studentFile);
@@ -34,7 +36,7 @@ public class Users
 	}
 	
 	
-	private void readTeacherFile() throws FileNotFoundException
+	private void readTeacherFile() throws FileNotFoundException, java.io.FileNotFoundException
 	{
 		FileReader teacherFile = new FileReader("TeacherUserNames.txt");
 		teacherScan = new Scanner(teacherFile);
@@ -81,8 +83,29 @@ public class Users
 		throw new IncorrectUsernameException("Incorrect Username.");
 	}
 	
+	public void addStudent(String username, String password) throws IOException, DuplicateUserNameException
+	{
+		FileReader studentFile = new FileReader("StudentUserNames.txt");
+		studentScan = new Scanner(studentFile);
+		
+		while(studentScan.hasNext())
+		{
+			if(studentScan.nextLine().equalsIgnoreCase(username))
+			{
+				throw new DuplicateUserNameException();
+			}
+			studentScan.nextLine();
+		}
+		
+		PrintWriter printWriter = new PrintWriter(new FileWriter("StudentUserNames.txt", true));
+		
+		printWriter.append(username + "\n");
+		printWriter.append(password + "\n");
+		printWriter.close();
+	}
+	
 	//return an ArrayList of student names contained in the file
-	public ArrayList<String> getStudents() throws FileNotFoundException
+	public ArrayList<String> getStudents() throws FileNotFoundException, java.io.FileNotFoundException
 	{
 		ArrayList<String> studentUsers = new ArrayList<String>();
 		ArrayList<String> pswd = new ArrayList<String>();
