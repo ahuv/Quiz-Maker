@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -16,46 +17,32 @@ public class TestClass
 	{
 		Scanner sc = new Scanner(System.in);
 		Users users = null;
+		String name = "";
+		
 		try{
 			users = new Users();
 		}
 		catch(FileNotFoundException | java.io.FileNotFoundException ex){
 			System.out.println("File not found.");
 		}
-		boolean found = true;
-		String name = "";
-		String password = "";
 		
-	
+		//starts the program, gets login status from user
 		int choice = initialize();
+		
 		switch (choice)
 		{
 		case 1: //user is a student
-			do
-			{
-				// checks student identification
-				try
-				{
-					found = true;
-					name = JOptionPane.showInputDialog("Please enter your username: ");
-					password = JOptionPane.showInputDialog("Please enter your password: ");
-					users.checkStudentPassword(name, password);
-					// checkIdentification(users,sc,name);
-				}
-				catch (IncorrectPasswordException | IncorrectUsernameException e){
-					System.out.println(e);
-					found = false;
-				}
-			}while (found == false);
 			
-			System.out.println("Hello " + name);
+			//checks user username and password
+			name = login(choice, users);
 			
 			String another;
 			String quizChoice = "";
 			Quiz quiz = null;
 			do
 			{
-				try {
+				try 
+				{
 					quizChoice = chooseQuiz();
 					quiz = new Quiz(quizChoice);
 				} 
@@ -71,7 +58,6 @@ public class TestClass
 				displayResults(marker);
 			
 				// write scores to file
-				
 				saveScores(marker, name, quizChoice);
 				
 				do 
@@ -90,23 +76,9 @@ public class TestClass
 			break;
 			
 		case 2: //user is a teacher
-			do
-			{// checks teacher identification
-				try
-				{
-					found = true;
-					name = JOptionPane.showInputDialog("Please enter your username: ");
-					password = JOptionPane.showInputDialog("Please enter your password: ");
-					users.checkTeacherPassword(name, password);
-					// checkIdentification(users,sc,name);
-				}
-				catch (IncorrectPasswordException | IncorrectUsernameException e)
-				{
-					System.out.println(e);
-					found = false;
-				}
-			}while (found == false);
-			
+		
+			//checks user username and password
+			name = login(choice, users);
 			int choiceT;
 			do{
 				choiceT = teacherMenu();
@@ -122,9 +94,9 @@ public class TestClass
 		
 	}
 	
-
+	
 	/**
-	 * Initialization of the quiz program.
+	 * The initialize method does the initialization of the quiz program.
 	 * Asks the user to choose his user status (teacher or student).
 	 * @return int choice The number corresponding to the user status.
 	 */
@@ -132,49 +104,81 @@ public class TestClass
 	{
 		JOptionPane.showMessageDialog(null, "Initializing quiz program...Press OK to continue");
 		final JPanel panel = new JPanel();
+	
+		final ButtonGroup group = new ButtonGroup();
 		final JRadioButton student = new JRadioButton("student");
 		final JRadioButton teacher = new JRadioButton("teacher");
+		group.add(student);
+		group.add(teacher);
+		
 		final JLabel message = new JLabel("Please choose your user status: ");
 		panel.add(message);
 		panel.add(student);
 		panel.add(teacher);
 		
-		JOptionPane.showMessageDialog(null, panel);
-		
 		int choice = 0;
 		
-		//as long as both options are selected, 
-		//prompt user to choose only one option
-		if(student.isSelected() && teacher.isSelected())
-		{
-			do
-			{
-			JOptionPane.showMessageDialog(null, "Cannot select two options at once!");
-			JOptionPane.showMessageDialog(null, panel);
-			
-			if(student.isSelected())
-			{
-				choice = 1;
-				break;
-			}
-			else if(teacher.isSelected())
-			{
-				choice = 2;
-				break;
-			}
-			
-			}while(student.isSelected() && teacher.isSelected());
-		}
-		else if(student.isSelected())
+		do{
+		JOptionPane.showMessageDialog(null, panel);
+		
+		if(student.isSelected())
 		{
 			choice = 1;
+			break;
 		}
 		else if(teacher.isSelected())
 		{
 			choice = 2;
+			break;
 		}
-		
+		}while(!student.isSelected() && !teacher.isSelected());
+			
 		return choice;
+	}
+	
+	/**
+	 * The login method logs in a user to the system.
+	 * Login is only successful if username and password provided are found to be valid.
+	 * @param choice The number indicating the user type (teacher or student)
+	 * @param users A User object that holds the state of the user
+	 * @return name The name of the user
+	 */
+	public static String login(int choice, Users users)
+	{
+		boolean found = true;
+		String name = "";
+		String password = "";
+		
+		do
+		{// checks identification
+			try
+			{
+				found = true;
+				name = JOptionPane.showInputDialog("Please enter your username: ");
+				password = JOptionPane.showInputDialog("Please enter your password: ");
+				if(choice == 1)
+				{
+					users.checkStudentPassword(name, password);
+				}
+				else
+				{
+					users.checkTeacherPassword(name, password);
+				}
+				
+			}
+			catch (IncorrectPasswordException | IncorrectUsernameException e)
+			{
+				System.out.println(e);
+				found = false;
+			}
+		}while (found == false);
+		
+		if (choice == 1)
+		{
+			System.out.println("Hello " + name);
+			return name;
+		}
+		else return null;
 	}
 	
 	/**
@@ -188,24 +192,24 @@ public class TestClass
 		
 		do
 		{
-		System.out.println("\nChoose an option from the following: \n");
-		System.out.println("1. Create new quiz");
-		System.out.println("2. View quizzes in test bank");
-		System.out.println("3. View student results");
-		System.out.println("4. Delete quiz");
-		System.out.println("5. Add new student");
-		System.out.println("0. Exit application");
+			System.out.println("\nChoose an option from the following: \n");
+			System.out.println("1. Create new quiz");
+			System.out.println("2. View quizzes in test bank");
+			System.out.println("3. View student results");
+			System.out.println("4. Delete quiz");
+			System.out.println("5. Add new student");
+			System.out.println("0. Exit application");
 		
-		try{
-			choice = sc.nextInt();
-		}
-		catch(InputMismatchException e){
-			System.out.println("Invalid entry. Please enter a number from 0-4: ");
-			sc.next();
-		}
-	}while(choice < 0);
+			try{
+				choice = sc.nextInt();
+			}
+			catch(InputMismatchException e){
+				System.out.println("Invalid entry. Please enter a number from 0-4: ");
+				sc.next();
+			}
+		}while(choice < 0);
 	
-	return choice;
+		return choice;
 	}
 	
 	/**
@@ -226,30 +230,22 @@ public class TestClass
 			String questions = "";
 			int numQs = 0;
 			
-			do{
 			System.out.println("\nEnter name of quiz: ");
 			quizName = sc.nextLine();
-			check = checkResponse(quizName);
-			}while(check == false);
+			quizName = checkResponse(quizName);
 			
-			System.out.println("Enter number of questions: ");
-			numQs = sc.nextInt();
-			
-			/*catch(InputMismatchException | NumberFormatException | StringIndexOutOfBoundsException e){
-				do{
-					System.out.println("Expecting integer.");
-					
-					do{
-					System.out.println("Enter number of questions: ");
-					questions = sc.nextLine();
-					check = checkResponse(questions);
-					if(check == true){break;}
-					}while(check == false);
-					
-				}while(!Character.isDigit(questions.charAt(0)));
-				numQs = Integer.parseInt(questions);
-			}*/
-			
+			do
+			{
+				System.out.println("Enter number of questions: ");
+				try{
+					numQs = sc.nextInt();
+				}
+				catch(InputMismatchException e){
+					System.out.println("Invalid entry. Please enter a number from 1-100: ");
+					sc.next();
+				}
+			}while(numQs < 1 || numQs > 100);
+
 			try
 			{
 				NewQuiz myQuiz = new NewQuiz(quizName, numQs, 4);
@@ -331,58 +327,55 @@ public class TestClass
 		for(int i = 0; i < myQuiz.getNumQs(); i++)
 		{
 			
-			try{
-				do{
 				System.out.println("Enter question " + (i+1) + ": ");
 				question = sc.nextLine();
-				check = checkResponse(question);
-				}while(check == false);
-				
-				myQuiz.addQuestion(question);
-				
-			}
-			catch(EmptyLineException e){
-				System.out.println("Cannot add empty line.");
-			}
+				question = checkResponse(question);
+				try
+				{
+					myQuiz.addQuestion(question);
+				}
+				catch(EmptyLineException e){
+					System.out.println("Cannot add empty line.");
+				}
 			
 			try{
-			int numOptions = myQuiz.getNumOptions();
-			ArrayList<String> options = new ArrayList<String>(numOptions);
-			for(int n = 0; n < numOptions; n++)
-			{
-				do{
-				System.out.println("Enter option " + (n+1) + ": ");
-				option = sc.nextLine();
-				check = checkResponse(option);
-				}while(check == false);
-				
-				//if(option.equals(""))
-				//{
-					//throw new EmptyLineException("");
-				//}
-				switch(n)
-				{
-				case 0:
-					options.add("A. " + option);
-					break;
-				case 1:
-					options.add("B. " + option);
-					break;
-				case 2:
-					options.add("C. " + option);
-					break;
-				case 3: 
-					options.add("D. " + option);
-					break;
-				}
-				
-			}
-			myQuiz.addOptions(options);
-			}
-			catch(EmptyLineException e){
-				System.out.println("Cannot add empty line.");
-			}
-			
+				int numOptions = myQuiz.getNumOptions();
+				ArrayList<String> options = new ArrayList<String>(numOptions);
+	  			for(int n = 0; n < numOptions; n++)
+	  			{
+	  				do{
+	  				System.out.println("Enter option " + (n+1) + ": ");
+	  				option = sc.nextLine();
+	  				
+	  				option = checkResponse(option);
+	  				}while(check == false);
+	 				
+	  				//if(option.equals(""))
+	  				//{
+	  					//throw new EmptyLineException("");
+	  				//}
+	  				switch(n)
+	  				{
+	  				case 0:
+	 					options.add("A. " + option);
+	 					break;
+	 				case 1:
+	 					options.add("B. " + option);
+	 					break;
+	 				case 2:
+	 					options.add("C. " + option);
+	 					break;
+	 				case 3: 
+	 					options.add("D. " + option);
+	 					break;
+	 				}
+	 				
+	 			}
+	 			myQuiz.addOptions(options);
+	 			}
+	 			catch(EmptyLineException e){
+	 				System.out.println("Cannot add empty line.");
+	  			}
 			char answer;
 			boolean valid = false;
 			
@@ -390,7 +383,6 @@ public class TestClass
 			
 			do
 			{
-				
 				answer = sc.next().charAt(0);
 				valid = validateAnswer(answer);
 				if(valid==true)
@@ -405,7 +397,8 @@ public class TestClass
 		System.out.println("\nYou have just created the following quiz: \n");
 		myQuiz.viewQuiz();
 		
-		try {
+		try 
+		{
 			myQuiz.makeNewQuiz();
 		} 
 		catch (IOException e) {
@@ -428,7 +421,7 @@ public class TestClass
 	}
 	
 	
-	public static boolean checkResponse(String answer)
+	public static String checkResponse(String answer)
 	{
 		Scanner sc = new Scanner(System.in);
 		
@@ -446,7 +439,7 @@ public class TestClass
 			}
 		}
 		
-		return valid;
+		return answer;
 	}
 	
 	

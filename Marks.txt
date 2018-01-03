@@ -37,3 +37,6 @@ Calendar.txt
 student2
 0
 CreateNew.txt
+student2
+100
+Spelling.txt

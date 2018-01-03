@@ -5,3 +5,5 @@ School2.txt
 Math.txt
 Calendar.txt
 Spelling.txt
+Touro.txt
+Touro2.txt
