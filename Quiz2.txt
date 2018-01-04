@@ -8,6 +8,10 @@ a
 
 Who is the best?
 a. Ahuva
+<<<<<<< HEAD
+=======
+
+>>>>>>> 70214c4c6c57c9d853294fbca1d143fb36bf5576
 b. Devorah
 c. None
 d. Both

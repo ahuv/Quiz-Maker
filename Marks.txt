@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 student1
 33
 OurClass.txt
@@ -10,6 +11,20 @@ OurClass.txt
 student1
 75
 OurClass.txt
+=======
+student1
+33
+OurClass.txt
+student1
+100
+OurClass.txt
+student1
+25
+OurClass.txt
+student1
+75
+OurClass.txt
+>>>>>>> 70214c4c6c57c9d853294fbca1d143fb36bf5576
 student1
 100
 Calendar.txt

@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 student1
 12345
 student2
 12345
+=======
+student1
+12345
+student2
+12345
+>>>>>>> 70214c4c6c57c9d853294fbca1d143fb36bf5576
 student3
 stu22
 student4

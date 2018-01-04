@@ -1,9 +1,19 @@
+<<<<<<< HEAD
 Quiz1.txt
 Quiz2.txt
 OurClass.txt
+=======
+OurClass.txt
+Quiz1.txt
+Quiz2.txt
+>>>>>>> 70214c4c6c57c9d853294fbca1d143fb36bf5576
 School2.txt
 Math.txt
 Calendar.txt
 Spelling.txt
 Touro.txt
+<<<<<<< HEAD
 Touro2.txt
+=======
+Touro2.txt
+>>>>>>> 70214c4c6c57c9d853294fbca1d143fb36bf5576
