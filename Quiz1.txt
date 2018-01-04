@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 What color is the sky?
 a. Blue
 b. Green
@@ -16,23 +15,4 @@ a. Data Structures
 b. Computer Methodology
 c. Database Design
 d. Programming Languages
-=======
-What color is the sky?
-a. Blue
-b. Green
-c. Red
-d. Orange
-a
-Who is the best?
-a. Ahuva
-b. Devorah
-c. None
-d. Both
-d
-What is your favorite subject?
-a. Data Structures
-b. Computer Methodology
-c. Database Design
-d. Programming Languages
->>>>>>> 70214c4c6c57c9d853294fbca1d143fb36bf5576
 b

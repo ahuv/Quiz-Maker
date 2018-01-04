@@ -42,36 +42,36 @@ public class QuizList
 
 	public boolean deleteQuiz(String QuizName) throws IncorrectQuizNameException, IOException
 	{
-		//delete quiz name from list
+		// delete quiz name from list
 		Writer writer = new FileWriter("AvailableQuiz.txt", false);
-		
+
 		boolean found;
-		
-		for(int i = 0; i < list.size(); i++)
+
+		for (int i = 0; i < list.size(); i++)
 		{
 			String name = list.get(i);
 			if (name.equalsIgnoreCase(QuizName))
- 			{
- 				found = true;
- 			}
- 			else
- 			{
- 				writer.append(name + "\n");
- 			}
+			{
+				found = true;
+			}
+			else
+			{
+				writer.append(name + "\n");
+			}
 		}
 		writer.close();
-		
-		//delete quiz file
+
+		// delete quiz file
 		File quizFile = new File(QuizName);
-		
+
 		if (quizFile.delete())
- 		{
- 			return true;
- 		}
+		{
+			return true;
+		}
 		else
 		{
 			return false;
 		}
- 		
-	 }
+
+	}
 }

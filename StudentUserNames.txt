@@ -1,15 +1,12 @@
-<<<<<<< HEAD
 student1
 12345
 student2
 12345
-=======
-student1
-12345
-student2
-12345
->>>>>>> 70214c4c6c57c9d853294fbca1d143fb36bf5576
 student3
-stu22
+stu3
 student4
-stu24
+stu4
+student5
+12345
+Student6
+12345

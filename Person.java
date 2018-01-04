@@ -1,10 +1,9 @@
 
-
 public class Person
 {
 	private String name;
 	private String password;
-	
+
 	public Person(String name, String password)
 	{
 		this.name = name;
@@ -26,6 +25,5 @@ public class Person
 	{
 		return password;
 	}
-	
-	
+
 }

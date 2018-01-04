@@ -1,5 +1,4 @@
 
-
 import java.util.ArrayList;
 
 public class QuizMarker
@@ -16,6 +15,7 @@ public class QuizMarker
 		score = 0;
 	}
 
+	// returns number of correct answers
 	public int correctAnswers()
 	{
 		int correct = 0;
@@ -32,6 +32,7 @@ public class QuizMarker
 		return correct;
 	}
 
+	// returns number of incorrect answers
 	public int incorrectAnswers()
 	{
 		int incorrect = 0;
@@ -48,6 +49,7 @@ public class QuizMarker
 		return incorrect;
 	}
 
+	// returns a list of which questions were answered incorrectly
 	public ArrayList<Integer> questionsMissed()
 	{
 		ArrayList<Integer> missed = new ArrayList<Integer>();
@@ -65,6 +67,7 @@ public class QuizMarker
 		return missed;
 	}
 
+	// returns letter grade
 	public char grade()
 	{
 		score = (int) (100 * ((double) correctAnswers() / answers.size()));

@@ -10,30 +10,30 @@ public class Marks
 	private ArrayList<Integer> grades;
 	private ArrayList<String> quizzes;
 	Scanner scan;
-	
-	//instantiates the names and grades ArrayLists and calls readFile()
+
+	// instantiates the names and grades ArrayLists and calls readFile()
 	public Marks() throws FileNotFoundException
 	{
 		names = new ArrayList<String>();
 		grades = new ArrayList<Integer>();
 		quizzes = new ArrayList<String>();
-		
+
 		readFile();
 	}
-	
-	//calls Marks file and reads the names and grades into ArrayLists
+
+	// calls Marks file and reads the names and grades into ArrayLists
 	private void readFile() throws FileNotFoundException
 	{
 		FileReader marksFile = new FileReader("Marks.txt");
 		scan = new Scanner(marksFile);
-		
-		while(scan.hasNext())
+
+		while (scan.hasNext())
 		{
 			names.add(scan.next());
 			grades.add(scan.nextInt());
 			quizzes.add(scan.next());
 		}
-		
+
 	}
 
 	/**
@@ -52,7 +52,6 @@ public class Marks
 		return grades;
 	}
 
-
 	/**
 	 * @return the quizzes
 	 */
@@ -60,6 +59,5 @@ public class Marks
 	{
 		return quizzes;
 	}
-	
-	
+
 }
